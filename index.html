@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artathon Donation Meter</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: transparent;
+    font-family: 'DM Mono', monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+
+  .meter-wrap {
+    width: 100%;
+    max-width: 560px;
+    background: #0d0d0d;
+    border: 2px solid #e8c94b;
+    border-radius: 4px;
+    padding: 2.5rem 2.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* paint splash background decoration */
+  .meter-wrap::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(232,201,75,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .label {
+    font-family: 'Fraunces', serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #e8c94b;
+    margin-bottom: 0.4rem;
+  }
+
+  .title {
+    font-family: 'Fraunces', serif;
+    font-size: 2rem;
+    color: #f5f0e8;
+    line-height: 1.1;
+    margin-bottom: 2rem;
+    font-style: italic;
+  }
+
+  .amounts {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.75rem;
+  }
+
+  .raised {
+    font-size: 2.4rem;
+    font-weight: 500;
+    color: #e8c94b;
+    letter-spacing: -0.02em;
+    transition: all 0.6s ease;
+  }
+
+  .goal {
+    font-size: 0.85rem;
+    color: #666;
+  }
+
+  /* track */
+  .track {
+    width: 100%;
+    height: 18px;
+    background: #1e1e1e;
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 1.25rem;
+  }
+
+  /* fill bar */
+  .fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #c8a832 0%, #e8c94b 60%, #f5df80 100%);
+    border-radius: 2px;
+    transition: width 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+  }
+
+  /* shimmer on fill */
+  .fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -60px;
+    width: 60px; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    animation: shimmer 2.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { left: -60px; }
+    100% { left: 100%; }
+  }
+
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .donors {
+    font-size: 0.78rem;
+    color: #555;
+  }
+
+  .donors span {
+    color: #999;
+  }
+
+  .pct {
+    font-size: 0.78rem;
+    color: #555;
+  }
+
+  .pct span {
+    color: #e8c94b;
+  }
+
+  .updated {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #1e1e1e;
+    font-size: 0.65rem;
+    color: #333;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .error-msg {
+    color: #c0392b;
+    font-size: 0.8rem;
+    margin-top: 1rem;
+  }
+</style>
+</head>
+<body>
+
+<div class="meter-wrap">
+  <div class="label">2026 Campaign</div>
+  <div class="title">Artathon<br>Fundraiser</div>
+
+  <div class="amounts">
+    <div class="raised" id="raised">$0</div>
+    <div class="goal">Goal: $25,000</div>
+  </div>
+
+  <div class="track">
+    <div class="fill" id="fill"></div>
+  </div>
+
+  <div class="meta">
+    <div class="donors">Donors: <span id="count">—</span></div>
+    <div class="pct"><span id="pct">0%</span> of goal</div>
+  </div>
+
+  <div class="updated" id="updated">Loading...</div>
+</div>
+
+<script>
+  // !! REPLACE THIS with your actual Netlify site URL after deploying !!
+  const NETLIFY_URL = 'https://YOUR-SITE-NAME.netlify.app/.netlify/functions/donations';
+  const GOAL = 25000;
+
+  function fmt(n) {
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+
+  async function fetchDonations() {
+    try {
+      const res = await fetch(NETLIFY_URL);
+      const data = await res.json();
+
+      if (data.error) throw new Error(data.error);
+
+      const total = data.total || 0;
+      const count = data.count || 0;
+      const pct = Math.min((total / GOAL) * 100, 100);
+
+      document.getElementById('raised').textContent = fmt(total);
+      document.getElementById('count').textContent = count.toLocaleString();
+      document.getElementById('pct').textContent = pct.toFixed(1) + '%';
+      document.getElementById('fill').style.width = pct + '%';
+
+      const now = new Date();
+      document.getElementById('updated').textContent =
+        'Last updated: ' + now.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'});
+
+    } catch (err) {
+      document.getElementById('updated').textContent = 'Could not load data.';
+      console.error(err);
+    }
+  }
+
+  // Load on page open, then refresh every 5 minutes
+  fetchDonations();
+  setInterval(fetchDonations, 5 * 60 * 1000);
+</script>
+</body>
+</html>
