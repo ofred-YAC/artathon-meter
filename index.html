@@ -403,11 +403,11 @@
 
             if (data.error) throw new Error(data.error);
 
-            donated = data.totalDays
+            donated = data.total
             if (donated < 2){
                 donated = 2
             }
-            console.log(data.totalDays)
+            console.log(data.total)
             } catch (err) {
             console.error(err);
             }
