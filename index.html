@@ -403,7 +403,10 @@
 
             if (data.error) throw new Error(data.error);
 
-            donated = data.total || 255;
+            donated = data.totalDays
+            if (donated < 255){
+                donated = 255
+            }
             
             } catch (err) {
             console.error(err);
