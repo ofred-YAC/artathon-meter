@@ -414,24 +414,25 @@
 
             donated = data.total;
 
-            firstName = data.recent[0]?.name ?? "Anonymous";
-            firstAmount = data.recent[0]?.amount ?? 0;
+            document.getElementById("donation1Name").textContent = data.recent[0]?.name ?? "Anonymous";
+            document.getElementById("donation1Amount") = data.recent[0]?.amount ?? 0;
             firstDate = new Date(data.recent[0]?.date);
 
-            secName = data.recent[1]?.name ?? "Anonymous";
-            secAmount = data.recent[1]?.amount ?? 0;
+            document.getElementById("donation2Name").textContent = data.recent[1]?.name ?? "Anonymous";
+            document.getElementById("donation2Amount").textContent = data.recent[1]?.amount ?? 0;
             secDate = new Date(data.recent[1]?.date);
 
-            thirdName = data.recent[2]?.name ?? "Anonymous";
-            thirdAmount = data.recent[2]?.amount ?? 0;
+            document.getElementById("donation3Name").textContent = data.recent[2]?.name ?? "Anonymous";
+            document.getElementById("donation3Amount").textContent = data.recent[2]?.amount ?? 0;
             thirdDate = new Date(data.recent[2]?.date);
+            
         }
         // Load on page open, then refresh every 5 minutes
         fetchDonations();
         setInterval(fetchDonations, 5 * 60 * 1000);
 
         //set donation variables
-        document.getElementById("donation1Name").textContent = firstName
+        
         //money goals
         
         var donationAnim = 1;
