@@ -393,7 +393,7 @@
     <script>
         const NETLIFY_URL = 'https://artathon-meter.netlify.app/.netlify/functions/donations';
        
-        let donated = 25;
+        let donated = 2;
        
 
         async function fetchDonations() {
@@ -404,10 +404,10 @@
             if (data.error) throw new Error(data.error);
 
             donated = data.totalDays
-            if (donated < 255){
-                donated = 255
+            if (donated < 2){
+                donated = 2
             }
-            
+            console.log(data.totalDays)
             } catch (err) {
             console.error(err);
             }
