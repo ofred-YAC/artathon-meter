@@ -373,19 +373,19 @@
         </div>
         <div id="box" class ="bottomBox">
             <div id="donation1" class = "donationBox">
-                <p1>Name</p1>
-                <p2>Amount</p2>
-                <p3>Time</p3>
+                <p1 id="donation1Name">Name</p1>
+                <p2 id="donation1Amount">Amount</p2>
+                <p3 id="donation1Time">Time</p3>
             </div>
             <div id="donation1" class = "donationBox">
-                <p1>Name</p1>
-                <p2>Amount</p2>
-                <p3>Time</p3>
+                <p1 id="donation2Name">Name</p1>
+                <p2 id="donation2Amount">Amount</p2>
+                <p3 id="donation2Time">Time</p3>
             </div>
             <div id="donation1" class = "donationBox">
-                <p1>Name</p1>
-                <p2>Amount</p2>
-                <p3>Time</p3>
+                <p1 id="donation3Name">Name</p1>
+                <p2 id="donation3Amount">Amount</p2>
+                <p3 id="donation3Time">Time</p3>
             </div>
         </div>
     </div>
@@ -394,30 +394,97 @@
         const NETLIFY_URL = 'https://artathon-meter.netlify.app/.netlify/functions/donations';
        
         let donated = 2;
-       
+        
+        //first
+        let firstName = "Name";
+        let firstAmount = 0.0;
+        let firstDate = new Date();
+        //second
+        let secName = "Name";
+        let secAmount = 0.0;
+        let secDate = new Date();
+        //third
+        let thirdName = "Name";
+        let thirdAmount = 0.0;
+        let thirdDate = new Date();
 
-        async function fetchDonations() {
+        exports.handler = async function (event, context) {
+            const apiKey = process.env.DONORPERFECT_API_KEY;
+            if (!apiKey) {
+                return { statusCode: 500, body: JSON.stringify({ error: "API key not configured" }) };
+            }
+
+            function dpFetch(sql) {
+                const url = `https://www.donorperfect.net/prod/xmlrequest.asp?apikey=${apiKey}&action=dp_sqlselect&version=1&sql=${encodeURIComponent(sql)}`;
+                return new Promise((resolve, reject) => {
+                https.get(url, (res) => {
+                    let data = "";
+                    res.on("data", (chunk) => (data += chunk));
+                    res.on("end", () => resolve(data));
+                }).on("error", reject);
+                });
+            }
+
+            function parseField(xml, field) {
+                const match = xml.match(new RegExp(`<${field}[^>]*>([^<]*)<\/${field}>`, "i"));
+                return match ? match[1].trim() : null;
+            }
+
+            function parseAllRecords(xml, field) {
+                const regex = new RegExp(`<${field}[^>]*>([^<]*)<\/${field}>`, "gi");
+                const results = [];
+                let match;
+                while ((match = regex.exec(xml)) !== null) results.push(match[1].trim());
+                return results;
+            }
+
             try {
-            const res = await fetch(NETLIFY_URL);
-            const data = await res.json();
+                // Query 1: total raised + donor count for 2026
+                const totalXml = await dpFetch(
+                `SELECT SUM(amount) as total, COUNT(*) as count FROM gift WHERE gift_date >= '01/01/2026' AND gift_date <= '12/31/2026' AND record_type = 'G'`
+                );
 
-            if (data.error) throw new Error(data.error);
+                // Query 2: last 3 donations with donor name and date
+                const recentXml = await dpFetch(
+                `SELECT TOP 3 g.amount, g.gift_date, dp.first_name, dp.last_name FROM gift g JOIN dp ON g.donor_id = dp.donor_id WHERE g.gift_date >= '01/01/2026' AND g.record_type = 'G' ORDER BY g.gift_date DESC, g.gift_id DESC`
+                );
 
-            donated = data.total
-            if (donated < 2){
-                donated = 2
-            }
-            console.log(data.total)
+                const total = parseFloat(parseField(totalXml, "total")) || 0;
+                const count = parseInt(parseField(totalXml, "count")) || 0;
+
+                const amounts = parseAllRecords(recentXml, "amount");
+                const dates = parseAllRecords(recentXml, "gift_date");
+                const firstNames = parseAllRecords(recentXml, "first_name");
+                const lastNames = parseAllRecords(recentXml, "last_name");
+
+                const recent = amounts.map((amt, i) => ({
+                amount: parseFloat(amt) || 0,
+                date: dates[i] || "",
+                name: `${firstNames[i] || ""} ${lastNames[i] || ""}`.trim() || "Anonymous",
+                }));
+
+                return {
+                statusCode: 200,
+                headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                body: JSON.stringify({ total, count, recent }),
+                };
             } catch (err) {
-            console.error(err);
+                return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
             }
-        }
+            donated = data.total
+            
+            firstName = data.recent[0].name
+            secName = data.recent[1].name
+            thirdName = data.recent[2].name
+
+        };
         
         // Load on page open, then refresh every 5 minutes
         fetchDonations();
         setInterval(fetchDonations, 5 * 60 * 1000);
 
-
+        //set donation variables
+        document.getElementById("donation1Name").textContent = firstName
         //money goals
         
         var donationAnim = 1;
@@ -525,6 +592,8 @@
 
         //fill circles if event passed
         if (currentDate >= artathonDate) document.getElementById("artathon_c").classList.add("passed");
+
+        //donation fields
 
     </script>
 </body>
