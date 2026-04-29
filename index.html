@@ -411,7 +411,7 @@
         async function fetchDonations() {
             const res = await fetch(NETLIFY_URL);
             const data = await res.json();
-
+            console.log(data);
             donated = data.total;
 
             document.getElementById("donation1Name").textContent = data.recent[0]?.name ?? "Anonymous";
