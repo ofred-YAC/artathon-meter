@@ -37,7 +37,7 @@
     }
     #container{
         width: 100%;
-        max-width: 600px;
+        max-width: 700px;
         min-height: 100px;
         padding: 6px;
        
@@ -391,8 +391,34 @@
     </div>
 
     <script>
-        //money goals
+        const NETLIFY_URL = 'https://artathon-meter.netlify.app/.netlify/functions/donations';
+       
         const donated = 5000;
+        function fmt(n) {
+            return '$' + Math.round(n).toLocaleString('en-US');
+        }
+
+        async function fetchDonations() {
+            try {
+            const res = await fetch(NETLIFY_URL);
+            const data = await res.json();
+
+            if (data.error) throw new Error(data.error);
+
+            donated = data.total || 0;
+            
+            } catch (err) {
+            console.error(err);
+            }
+        }
+
+        // Load on page open, then refresh every 5 minutes
+        fetchDonations();
+        setInterval(fetchDonations, 5 * 60 * 1000);
+
+
+        //money goals
+        
         var donationAnim = 1;
         var donationPercent = 0;
         const artathonGoal = 4000;
