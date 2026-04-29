@@ -434,8 +434,7 @@
 
         if (currentDate < startDate) currentDate.setTime(startDate.getTime());
         if (currentDate > summershowDate) currentDate.setTime(summershowDate.getTime());
-        console.log(currentDate)
-
+        
         function animateDonation(current, target) {
             if (current < target) {
                 var speed = 10
@@ -446,7 +445,7 @@
                 var meter = (11+(current / goal)*83).toFixed(1) + "%"
                 if (donated <= speed)
                 meter = 0+ "%";
-                console.log(meter);
+                
                 
                 document.getElementById("currentDonationAmount").textContent = "$" + current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                 document.documentElement.style.setProperty('--chickenMeterValue', meter)
@@ -465,7 +464,6 @@
         const totalDays = (summershowDate - startDate) / (24*60*60*1000);
         const daysPassed = (currentDate - startDate) / (24*60*60*1000);
 
-        console.log(daysPassed)
         //const timelinePercent = ((daysPassed / totalDays)*100).toFixed(1)
         const artathonDays = (artathonDate - startDate) / (24*60*60*1000);
         const artathonPercent = (100-((artathonDays / totalDays)*100)).toFixed(1) + "%"
