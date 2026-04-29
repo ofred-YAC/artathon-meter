@@ -374,6 +374,553 @@
         <div id="box" class ="bottomBox">
             <div id="donation1" class = "donationBox">
                 <p1 id="donation1Name">Name</p1>
+                <p2 id="donation1Amount">0</p2>
+                <p3 id="donation1Time">Time</p3>
+            </div>
+            <div id="donation1" class = "donationBox">
+                <p1 id="donation2Name">Name</p1>
+                <p2 id="donation2Amount">0</p2>
+                <p3 id="donation2Time">Time</p3>
+            </div>
+            <div id="donation1" class = "donationBox">
+                <p1 id="donation3Name">Name</p1>
+                <p2 id="donation3Amount">0</p2>
+                <p3 id="donation3Time">Time</p3>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const NETLIFY_URL = 'https://artathon-meter.netlify.app/.netlify/functions/donations';
+       
+        let donated = 2;
+        
+        //first
+        let firstName = "Name";
+        let firstAmount = 0.0;
+        let firstDate = new Date();
+        //second
+        let secName = "Name";
+        let secAmount = 0.0;
+        let secDate = new Date();
+        //third
+        let thirdName = "Name";
+        let thirdAmount = 0.0;
+        let thirdDate = new Date();
+
+        async function fetchDonations() {
+            const res = await fetch(NETLIFY_URL);
+            const data = await res.json();
+            console.log(data);
+            donated = data.total;
+
+            document.getElementById("donation1Name").textContent = data.recent[0]?.name ?? "Anonymous";
+            document.getElementById("donation1Amount").textContent = data.recent[0]?.amount ?? 0;
+            document.getElementById("donation1Time").textContent = new Date(data.recent[0]?.date);
+
+            document.getElementById("donation2Name").textContent = data.recent[1]?.name ?? "Anonymous";
+            document.getElementById("donation2Amount").textContent = data.recent[1]?.amount ?? 0;
+            document.getElementById("donation2Time").textContent = new Date(data.recent[1]?.date);
+
+            document.getElementById("donation3Name").textContent = data.recent[2]?.name ?? "Anonymous";
+            document.getElementById("donation3Amount").textContent = data.recent[2]?.amount ?? 0;
+            document.getElementById("donation3Time").textContent = new Date(data.recent[2]?.date);
+            
+        }
+        // Load on page open, then refresh every 5 minutes
+        fetchDonations();
+        
+
+        //set donation variables
+        
+        //money goals
+        
+        var donationAnim = 1;
+        var donationPercent = 0;
+        const artathonGoal = 4000;
+        const goal = 12000;
+        
+        //dates
+        const currentDate = new Date();
+        const startDate = new Date("2026-05-04");
+        const artathonDate = new Date("2026-05-18");
+        const summershowDate = new Date("2026-07-24");
+
+        
+
+        if (currentDate < startDate) currentDate.setTime(startDate.getTime());
+        if (currentDate > summershowDate) currentDate.setTime(summershowDate.getTime());
+        
+        function animateDonation(current, target) {
+            if (current < target) {
+                var speed = 10
+                current+= speed;
+                if (current > target) 
+                    current = target
+                
+                var meter = (11+(current / goal)*83).toFixed(1) + "%"
+                if (donated <= speed)
+                meter = 0+ "%";
+                
+                
+                document.getElementById("currentDonationAmount").textContent = "$" + current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                document.documentElement.style.setProperty('--chickenMeterValue', meter)
+                setTimeout(() => animateDonation(current, target), 4); // Update every 10ms
+            }
+        }
+
+        // Usage
+        animateDonation(donationAnim, donated);
+
+        //set goal
+        document.getElementById("artathon_g").textContent = "Goal: $" + artathonGoal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        document.getElementById("summer_g").textContent = "Goal: $" + goal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+        //math
+        const totalDays = (summershowDate - startDate) / (24*60*60*1000);
+        const daysPassed = (currentDate - startDate) / (24*60*60*1000);
+
+        //const timelinePercent = ((daysPassed / totalDays)*100).toFixed(1)
+        const artathonDays = (artathonDate - startDate) / (24*60*60*1000);
+        const artathonPercent = (100-((artathonDays / totalDays)*100)).toFixed(1) + "%"
+        
+        //map range
+        function map_range(value, low1, high1, low2, high2) {
+            return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+        }
+
+        var timelinePercent
+        var percentFirstHalf = map_range(daysPassed, 0, artathonDays, 0, 50)
+        var percentSecondHalf = map_range(daysPassed, artathonDays, totalDays, 50, 100)
+       
+        
+        const timeLeftDiv = document.createElement("div");
+        timeLeftDiv.id = "timeLeft";
+        
+        function timeLeftAmount(days) {
+           if (parseInt(days / 30) >= 1){
+            var months = parseInt(days/30)
+            if (months > 1){
+                return months + " months left!"
+            }
+            else{
+                return months + " month left!"
+            }
+           }
+           else{
+            return days + " days left!"
+           }
+        }
+
+        const circleDiv = document.createElement("div")
+        circleDiv.id = "circleDisplay"
+
+        if (daysPassed <= artathonDays){
+            timeLeftDiv.textContent = timeLeftAmount(artathonDays - daysPassed)
+            document.getElementById("artathon_e").appendChild(timeLeftDiv)
+            timelinePercent = percentFirstHalf + "%";
+            document.getElementById("artathon_et").classList.add("enabled");
+            document.getElementById("summer_et").classList.add("disabled");
+            document.getElementById("artathon_cl").classList.add("en")
+            document.getElementById("artathon_c").classList.add("en")
+        }
+            
+        else{
+            timeLeftDiv.textContent = timeLeftAmount(totalDays-daysPassed)
+            document.getElementById("summer_e").appendChild(timeLeftDiv)
+            timelinePercent = percentSecondHalf + "%";
+            document.getElementById("summer_et").classList.add("enabled");
+            document.getElementById("artathon_et").classList.add("disabled");
+            document.getElementById("summer_c").classList.add("en");
+            document.getElementById("summer_cl").classList.add("en")
+        }
+        //set timeline meter
+        document.documentElement.style.setProperty('--timelineValue', timelinePercent);
+        document.documentElement.style.setProperty('--artathonLoc', "50%")
+
+        //fill circles if event passed
+        if (currentDate >= artathonDate) document.getElementById("artathon_c").classList.add("passed");
+
+        //donation fields
+
+    </script>
+</body>
+</head><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARTathon/Summer Show Fundraiser Meter</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+        --main-padding: 15px;
+        --timelineSize: 400px;
+        --circleSize: 15px;
+        --artathonLoc: 35%;
+        --lineWidth: 25px;
+        --backgroundColor: #f2f7ff;
+        --textColor: #354395;
+        --timelineValue: 0%;
+        --timelineColor: rgb(214, 105, 16);
+
+        --chickenMeter: rgb(255, 213, 3);
+        --chickenMeterValue: 100%;
+    }
+    @font-face {
+        font-family: 'granville';
+        src: url('./granville.otf')  format('truetype');
+    }
+    body{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 0;
+        font-family: 'granville';
+        font-style:normal;
+        font-weight: 400; /* normal */
+        font-synthesis: none;
+    }
+    #container{
+        width: 100%;
+        max-width: 700px;
+        min-height: 100px;
+        padding: 6px;
+       
+        
+    }
+    #box{
+        background-color: var(--backgroundColor);
+        width: 100%;
+        margin-bottom: var(--main-padding);
+        border-radius: 25px;
+        padding: var(--main-padding);
+        border-style: solid;
+        border-width: 1px;
+        border-color: rgb(194, 194, 255);
+        filter: drop-shadow(0px 5px 0px #00226009);
+        
+    }
+    .topBox{
+       aspect-ratio: 1/1;
+    }
+    
+    #top{
+        display: flex;
+        background-color: var(--backgroundColor);
+        margin-top: 15px;
+        width: 100%;
+        flex-direction:row;
+        aspect-ratio: 12.4/10;
+    }
+    #bottom{
+        background-color: var(--backgroundColor);
+        min-height: 80px;
+        width: 100%;
+        margin-top: var(--main-padding);
+        display: flex;
+        flex-direction: row;
+    }
+    #chickenContainer{
+        width: 35%;
+        
+        background-color: var(--backgroundColor);
+        margin-right: var(--main-padding);
+        position: relative;
+    }
+    #timelineContainer{
+        width: 65%;
+        
+        background-color: var(--backgroundColor);
+        display: flex;
+        flex-direction: row;
+        
+    }
+    #timelineMeter{
+        height: 100%;
+        width: 12px;
+        background-color: var(--timelineColor);
+        border-style: solid;
+        border-width: 1px;
+        border-radius: 15px;
+        border-color: var(--timelineColor);
+        opacity:70%;
+    }
+    #timelineMeterFill{
+        height: calc(100% - var(--timelineValue));
+        background-color: rgb(255, 255, 255);
+        width: 100%;
+    }
+    #timelineText{
+        height: 100%;
+        position: relative;
+        width: 100%;
+    }
+    .eventBox{
+        
+        position: absolute;
+        margin-left: 35px;
+        align-items: center;
+        transform:translateY(-15px)
+    }
+    #artathon_eb{
+        top: var(--artathonLoc);
+    }
+    #summer_eb{
+        top: 0%
+    }
+    #start_eb{
+        top: 100%
+    }
+    #circles{
+        height: 100%;
+        position: relative;
+    }
+    .circle{
+        background-color: white;
+        border-radius: 50%;
+        width: var(--circleSize);
+        height: var(--circleSize);
+        margin: 0;
+        border-style: solid;
+        border-width: 1px;
+        border-color: var(--timelineColor);
+        position: absolute;
+        transform: translateY(-7px) translateX(-13px);
+        z-index: 25;
+    }
+    #artathon_c{
+        top: var(--artathonLoc)
+        
+    }
+    #start_c{
+       top:99%
+    }
+    .circle.passed{
+        background-color: var(--timelineColor);
+    }
+    .circle.en{
+        border-width: 2px;
+    }
+    #lines{
+        height: 100%;
+        position: relative;
+    }
+    .circleLine{
+        width: var(--lineWidth);
+        height: 1px;
+        background-color: var(--timelineColor);
+        position: absolute;
+        transform: translateX(-2px)
+    }
+    .circleLine.en{
+        height: 2px;
+    }
+    #artathon_cl{
+        top: var(--artathonLoc)
+    }
+
+    #start_cl{
+       top: 99%
+    }
+    
+    #currentAmount{
+        display: flex;
+        flex-direction: row;
+        height: 80px;
+        padding: 25px;
+        align-items: center;
+        width: 70%;
+        font-size: 1.6rem;
+        text-align: right;
+    }
+    h3{
+       margin: 7px;
+        font-size: 120%;
+    }
+    h4{
+        font-size: 90%;
+        opacity: 90%;
+    }
+    #donateButton{
+        margin: 15px;
+        width: 70%;
+        max-width: 220px;
+        font-family: granville;
+        font-size: 1.4rem;
+        border-radius: 25px;
+        color: var(--textColor);
+        border-color: var(--textColor);
+        background-color: white;
+        border-width: 2px;
+        cursor: pointer;
+        filter: drop-shadow(0px 5px 0px #0022603f);
+    }
+    #donateButton:hover{
+        transform: translateY(2px);
+        filter: drop-shadow(0px 3px 0px #0022603f);
+        background-color: rgba(255, 255, 255, 0.948);
+    }
+    #donateButton:active{
+        transform: translateY(5px);
+        filter: drop-shadow(0px 0px 0px #0022603f)
+    }
+    
+    #chicken{
+        background-image: url(./chicken.png);
+        width: 100%;
+        height: 100%;
+        background-size: contain;
+        background-repeat: repeat-x;
+        position: absolute;
+        background-position: bottom;
+        
+    }
+    #chickenMeter {
+        height: 100%;
+    }
+    
+    .eventText.disabled{
+        color: #7a82b5;
+        font-size: 1.2rem;
+    }
+    .eventText.enabled{
+        font-size: 1.6rem;
+        color: #354395
+    }
+    .goal{
+        font-size:80%;
+        opacity: 95%;
+    }
+    #chickenMeter{
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        background-color: var(--chickenMeter);
+        border-radius: 15px;
+
+    }
+    #chickenMeter::after{
+        background-color: red;
+    }
+    #chickenMeterFill{
+        height: calc(100% - var(--chickenMeterValue));
+        background-color: rgb(255, 255, 255);
+        border-width: 2px;
+        border-color: rgba(207, 100, 0, 0.403);
+        border-style: solid;
+        width: 100%;
+        z-index: 25;
+    }
+    #circleDisplay{
+        width:20px;
+        height:20px;
+        background-color: var(--chickenMeter);
+        border-color: rgba(0, 0, 0, 0.235);
+        border-style: solid;
+        border-width: 1px;
+        border-radius: 50%;
+        aspect-ratio: 1;
+    }
+    #timeLeft{
+        font-size: 70%;
+        opacity: 70%;
+    }
+    .bottomBox{    
+        min-height: 50px;
+        display: flex;
+        flex-direction: row;
+    }
+    .donationBox{
+        display: flex;
+        flex-direction: column;
+        font-size: 1.3rem;
+        color: var(--textColor);
+        width:33.33333%;
+        padding: 10px;
+        border-style: dashed;
+        border-width: 1px;
+        border-color: rgba(77, 61, 255, 0.264);
+        border-radius: 15px;
+        margin: 5px;
+        background-color: rgba(255, 255, 255, 0.446);
+    }
+    p1{
+        opacity: 80%;
+    }
+    p2{
+        font-size: 90%;
+        opacity: 100%;
+    }
+    p3{
+        font-size: 70%;
+        opacity: 70%;
+    }
+</style>
+</head>
+<body>
+    <div id="container">
+        <div id="box" class ="topBox">
+            <div id="top">
+                
+                <div id="chickenContainer">
+                    <div id="chickenMeter">
+                        <div id="chickenMeterFill"></div>
+                    </div>
+                    <div id="chicken"></div>
+                </div>
+                
+                <div id="timelineContainer">
+                    <div id="timelineMeter">
+                        <div id="timelineMeterFill"></div>
+                    </div>
+                    
+                    <div id="circles">
+                        <div id="summer_c" class= "circle"></div>
+                        <div id="artathon_c" class ="circle"></div>
+                        <div id="start_c" class ="circle passed"></div>
+                    </div>
+                    
+                    <div id="lines">
+                        <div id="summer_cl" class="circleLine"></div>
+                        <div id="artathon_cl" class="circleLine"></div>
+                        <div id="start_cl" class="circleLine"></div>
+                    </div>
+
+                    <div id="timelineText">
+                        <div id="summer_eb" class ="eventBox">
+                            <div id="summer_et" class ="eventText">
+                                <div id="summer_e" class="event">Summer Show (7/24)</div>
+                                <div id="summer_g" class="goal">Goal: $12,000</div>
+                            </div>
+                            
+                        </div>
+                        <div id="artathon_eb" class="eventBox">
+                            <div id="artathon_et" class ="eventText">
+                                <div id="artathon_e" class="event">ARTathon (5/18)</div>
+                                
+                                <div id="artathon_g" class="goal">Goal: $4,000</div>
+                            </div>
+                        </div>
+                        <div id="start_eb" class="eventBox">
+                            <div id="start_et" class ="eventText disabled">
+                                <div id="event">Start(5/4)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="bottom">
+                <div id="currentAmount">
+                    <h4>We're at: </h4><h3 id="currentDonationAmount">$4,000</h3><div id="circleDisplay"></div>
+                </div>
+                <button id="donateButton">Donate!</button>
+            </div>
+        </div>
+        <div id="box" class ="bottomBox">
+            <div id="donation1" class = "donationBox">
+                <p1 id="donation1Name">Name</p1>
                 <p2 id="donation1Amount">Amount</p2>
                 <p3 id="donation1Time">Time</p3>
             </div>
