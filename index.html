@@ -416,15 +416,15 @@
 
             document.getElementById("donation1Name").textContent = data.recent[0]?.name ?? "Anonymous";
             document.getElementById("donation1Amount").textContent = data.recent[0]?.amount ?? 0;
-            document.getElementById("donation1Time").textContent = new Date(data.recent[0]?.date ?? "0 days ago");
+            document.getElementById("donation1Time").textContent = data.recent[0]?.date ?? "0 days ago";
 
             document.getElementById("donation2Name").textContent = data.recent[1]?.name ?? "Anonymous";
             document.getElementById("donation2Amount").textContent = data.recent[1]?.amount ?? 0;
-            document.getElementById("donation2Time").textContent = new Date(data.recent[1]?.date ?? "0 days ago");
+            document.getElementById("donation2Time").textContent = data.recent[1]?.date ?? "0 days ago";
 
             document.getElementById("donation3Name").textContent = data.recent[2]?.name ?? "Anonymous";
             document.getElementById("donation3Amount").textContent = data.recent[2]?.amount ?? 0;
-            document.getElementById("donation3Time").textContent = new Date(data.recent[2]?.date ?? "0 days ago");
+            document.getElementById("donation3Time").textContent = data.recent[2]?.date ?? "0 days ago";
             
         }
         // Load on page open, then refresh every 5 minutes
