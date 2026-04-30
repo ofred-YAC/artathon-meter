@@ -8,6 +8,7 @@ exports.handler = async function (event, context) {
 
   function dpFetch(sql) {
     const url = `https://www.donorperfect.net/prod/xmlrequest.asp?apikey=${apiKey}&action=${encodeURIComponent(sql)}`;
+    console.log("FETCHING URL:", url); // add this line
     return new Promise((resolve, reject) => {
       https.get(url, (res) => {
         let data = "";
