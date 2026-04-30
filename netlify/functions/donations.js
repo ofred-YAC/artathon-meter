@@ -7,7 +7,8 @@ exports.handler = async function (event, context) {
   }
 
   function dpFetch(sql) {
-    const url = `https://www.donorperfect.net/prod/xmlrequest.asp?apikey=${apiKey}&action=${sql}`;
+    const encoded = encodeURIComponent(sql);
+    const url = `https://www.donorperfect.net/prod/xmlrequest.asp?apikey=${apiKey}&action=${encoded}`;
     console.log("FETCHING URL:", url);
     return new Promise((resolve, reject) => {
       https.get(url, (res) => {
@@ -30,7 +31,7 @@ exports.handler = async function (event, context) {
     while ((recordMatch = recordRegex.exec(xml)) !== null) {
       const block = recordMatch[1];
       const get = (field) => {
-        const m = block.match(new RegExp(`<${field}[^>]*>([^<]*)<\/${field}>`, "i"));
+        const m = block.match(new RegExp(`<field[^>]*name=['"]${field}['"][^>]*value=['"]([^'"]*)['"]/?>`, "i"));
         return m ? m[1].trim() : "";
       };
       records.push({
