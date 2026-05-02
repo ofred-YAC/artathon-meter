@@ -1,98 +1,78 @@
-const https = require("https");
+// DonorPerfect — fetch total donated via "artathon" online form
+// Based on DPO XML API Documentation v7.1
+//
+// HOW IT WORKS:
+// The DP API accepts a SQL SELECT directly in the &action= parameter.
+// Results come back as XML with fields like:
+//   <field name="total_donated" id="total_donated" value="1234.56" />
+//
+// Replace YOUR_API_KEY with your actual DonorPerfect API key.
 
-exports.handler = async function () {
-  const apiKey = process.env.DONORPERFECT_API_KEY;
+const DP_API_KEY = "WjdTFvbEA9i4wVP0gvzLifRYKpSHQQW7C49JxwIBCrNEJEiMeyNl%2fMVLd27vq0vCRnnCzzg52CNqjtroGO53DR8JhlRyOjKvrii%2bOvzA8NR4MIqIlzzFV%2fEZ%2f8Ir9iJ2";
+const DP_BASE_URL = "https://www.donorperfect.net/prod/xmlrequest.asp";
 
-  function dpFetch(sql) {
-    const url = `https://www.donorperfect.net/prod/xmlrequest.asp?apikey=${apiKey}&action=${encodeURIComponent(sql)}`;
-    return new Promise((resolve, reject) => {
-      https.get(url, (res) => {
-        let data = "";
-        res.on("data", (c) => (data += c));
-        res.on("end", () => resolve(data));
-      }).on("error", reject);
-    });
-  }
+async function getArtathonTotal() {
+  // SQL goes directly in the action parameter (URL-encoded per the docs).
+  // dpgift stores online form donations. Most commonly the form name ends up
+  // in gift_narrative — but see the notes at the bottom if this returns 0.
+  const sql = `SELECT SUM(amount) AS total_donated, COUNT(*) AS gift_count FROM dpgift WHERE LOWER(gift_narrative) LIKE '%artathon%' AND record_type = 'G'`;
 
-  function parseRecords(xml) {
-    const records = [];
-    const recordRegex = /<record[^>]*>([\s\S]*?)<\/record>/gi;
+  const url = `${DP_BASE_URL}?apikey=${DP_API_KEY}&action=${encodeURIComponent(sql)}`;
 
-    let match;
-    while ((match = recordRegex.exec(xml))) {
-      const block = match[1];
-      const get = (field) => {
-        const m = block.match(
-          new RegExp(`name=['"]${field}['"][^>]*value=['"]([^'"]*)`, "i")
-        );
-        return m ? m[1] : "";
-      };
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
 
-      records.push({
-        amount: parseFloat(get("amount")) || 0,
-        date: get("gift_date"),
-        donor_id: get("donor_id"),
-      });
-    }
-    return records;
-  }
+  const text = await response.text();
+  const xml = new DOMParser().parseFromString(text, "text/xml");
 
-  function parseDonors(xml) {
-    const map = {};
-    const recordRegex = /<record[^>]*>([\s\S]*?)<\/record>/gi;
-
-    let match;
-    while ((match = recordRegex.exec(xml))) {
-      const block = match[1];
-      const get = (field) => {
-        const m = block.match(
-          new RegExp(`name=['"]${field}['"][^>]*value=['"]([^'"]*)`, "i")
-        );
-        return m ? m[1] : "";
-      };
-
-      const id = get("donor_id");
-      map[id] = `${get("first_name")} ${get("last_name")}`.trim();
-    }
-    return map;
-  }
-
-  try {
-    // 1. Get gifts (simple query ONLY)
-    const giftsXml = await dpFetch(
-      `SELECT amount, gift_date, donor_id FROM gift WHERE gift_date >= '2026-01-01' AND record_type = 'G'`
+  // Helper: find a <field> by its name attribute and return its value
+  const getValue = (name) => {
+    const field = [...xml.querySelectorAll("field")].find(
+      (f) => f.getAttribute("name") === name
     );
+    return field ? field.getAttribute("value") : null;
+  };
 
-    const gifts = parseRecords(giftsXml);
+  // Check for a DP-level error
+  const err = getValue("error");
+  if (err) throw new Error(`DonorPerfect error: ${err}`);
 
-    // 2. Compute total
-    const total = gifts.reduce((sum, g) => sum + g.amount, 0);
+  const total = parseFloat(getValue("total_donated") || 0);
+  const count = parseInt(getValue("gift_count") || 0, 10);
 
-    // 3. Sort + take latest 3
-    const recentGifts = gifts
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
-      .slice(0, 3);
+  return {
+    total,
+    count,
+    formatted: total.toLocaleString("en-US", { style: "currency", currency: "USD" }),
+  };
+}
 
-    // 4. Get donor names (separate query)
-    const donorsXml = await dpFetch(
-      `SELECT donor_id, first_name, last_name FROM dp`
-    );
+// --- Usage ---
+// Call on page load and point at your HTML elements.
 
-    const donorMap = parseDonors(donorsXml);
+getArtathonTotal()
+  .then(({ formatted, count }) => {
+    console.log(`Artathon total: ${formatted} from ${count} gifts`);
 
-    // 5. Attach names
-    const recent = recentGifts.map((g) => ({
-      amount: g.amount,
-      date: g.date,
-      name: donorMap[g.donor_id] || "Anonymous",
-    }));
+    // Update your DOM — change these IDs to match your HTML
+    const totalEl = document.getElementById("artathon-total");
+    const countEl = document.getElementById("artathon-count");
+    if (totalEl) totalEl.textContent = formatted;
+    if (countEl) countEl.textContent = `${count} donations`;
+  })
+  .catch((err) => console.error("Failed to fetch artathon total:", err));
 
-    return {
-      statusCode: 200,
-      headers: { "Access-Control-Allow-Origin": "*" },
-      body: JSON.stringify({ total, recent }),
-    };
-  } catch (err) {
-    return { statusCode: 500, body: err.message };
-  }
-};
+// ---------------------------------------------------------------------------
+// IF THE QUERY RETURNS $0 / 0 GIFTS:
+// The form name might be stored differently in your DP system.
+// Swap the `sql` variable above with one of these to investigate:
+//
+// See the last 10 gift_narrative values to find your form's exact name:
+//   const sql = `SELECT TOP 10 gift_id, gift_narrative, amount FROM dpgift ORDER BY gift_id DESC`;
+//
+// Filter by sub_solicit_code instead:
+//   const sql = `SELECT SUM(amount) AS total_donated, COUNT(*) AS gift_count FROM dpgift WHERE LOWER(sub_solicit_code) LIKE '%artathon%' AND record_type = 'G'`;
+//
+// Filter by campaign code instead:
+//   const sql = `SELECT SUM(amount) AS total_donated, COUNT(*) AS gift_count FROM dpgift WHERE LOWER(campaign) LIKE '%artathon%' AND record_type = 'G'`;
+// ---------------------------------------------------------------------------
