@@ -382,17 +382,17 @@
         <div id="box" class ="bottomBox">
             <div id="donation1" class = "donationBox">
                 <p1 id="donation1Name">Name</p1>
-                <p2 id="donation1Amount">0</p2>
+                <p2 id="donation1Amount">$0</p2>
                 <p3 id="donation1Time">Time</p3>
             </div>
             <div id="donation1" class = "donationBox">
                 <p1 id="donation2Name">Name</p1>
-                <p2 id="donation2Amount">0</p2>
+                <p2 id="donation2Amount">$0</p2>
                 <p3 id="donation2Time">Time</p3>
             </div>
             <div id="donation1" class = "donationBox">
                 <p1 id="donation3Name">Name</p1>
-                <p2 id="donation3Amount">0</p2>
+                <p2 id="donation3Amount">$0</p2>
                 <p3 id="donation3Time">Time</p3>
             </div>
         </div>
@@ -422,25 +422,26 @@
             const res = await fetch(NETLIFY_URL);
             const data = await res.json();
             donated = data.total || 0;
-
+        
             document.getElementById("donation1Name").textContent = data.recent[0]?.name ?? "Anonymous";
             document.getElementById("donation1Amount").textContent = "$" + (data.recent[0]?.amount ?? 0).toLocaleString();
             document.getElementById("donation1Time").textContent = data.recent[0]?.daysAgo === 0 ? "today" : (data.recent[0]?.daysAgo ?? "?") + " days ago";
-
+        
             document.getElementById("donation2Name").textContent = data.recent[1]?.name ?? "Anonymous";
             document.getElementById("donation2Amount").textContent = "$" + (data.recent[1]?.amount ?? 0).toLocaleString();
             document.getElementById("donation2Time").textContent = data.recent[1]?.daysAgo === 0 ? "today" : (data.recent[1]?.daysAgo ?? "?") + " days ago";
-
+        
             document.getElementById("donation3Name").textContent = data.recent[2]?.name ?? "Anonymous";
             document.getElementById("donation3Amount").textContent = "$" + (data.recent[2]?.amount ?? 0).toLocaleString();
             document.getElementById("donation3Time").textContent = data.recent[2]?.daysAgo === 0 ? "today" : (data.recent[2]?.daysAgo ?? "?") + " days ago";
-            startAnim = true
+        
         } catch (err) {
             console.error("Could not fetch donations:", err);
             donated = 0;
         }
         animateDonation(donationAnim, donated);
         }
+
         // Load on page open, then refresh every 5 minutes
         //fetchDonations();
         
