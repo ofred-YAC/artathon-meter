@@ -416,6 +416,7 @@
         let thirdAmount = 0.0;
         let thirdDate = new Date();
 
+        let startAnim = false
        async function fetchDonations() {
         try {
             const res = await fetch(NETLIFY_URL);
@@ -433,7 +434,7 @@
             document.getElementById("donation3Name").textContent = data.recent[2]?.name ?? "Anonymous";
             document.getElementById("donation3Amount").textContent = "$" + (data.recent[2]?.amount ?? 0).toLocaleString();
             document.getElementById("donation3Time").textContent = data.recent[2]?.daysAgo === 0 ? "today" : (data.recent[2]?.daysAgo ?? "?") + " days ago";
-
+            startAnim = true
         } catch (err) {
             console.error("Could not fetch donations:", err);
             donated = 0;
@@ -454,7 +455,7 @@
         const goal = 20000;
         
         //dates
-        const currentDate = new Date("2026-05-07");
+        const currentDate = new Date();
         const startDate = new Date("2026-05-04");
         const artathonDate = new Date("2026-05-18");
         const summershowDate = new Date("2026-07-24");
@@ -483,7 +484,7 @@
         }
 
         // Usage
-        animateDonation(donationAnim, donated);
+        
 
         //set goal
         document.getElementById("artathon_g").textContent = "Goal: $" + artathonGoal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
