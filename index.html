@@ -400,28 +400,8 @@
 
     <script>
         const NETLIFY_URL = 'https://artathon-meter.netlify.app/.netlify/functions/donations';
-
-        let donated = 2; // will be set by fetchDonations()
-        let startAnim = false
-        async function fetchDonations() {
-            startAnim = true
-        try {
-            const res = await fetch(NETLIFY_URL);
-            const data = await res.json();
-            donated = data.total || 0;
-            console.log("its working")
-        } catch (err) {
-            console.error("Could not fetch donations:", err);
-            donated = 0;
-        }
-        animateDonation(donationAnim, donated);
-        }
-        console.log(donated)
-        // ... keep all your existing variable declarations ...
-
-        // Then at the bottom, REPLACE the animateDonation() call with:
-        fetchDonations();
-        
+       
+        let donated = 7000;
         
         //first
         let firstName = "Name";
@@ -435,6 +415,31 @@
         let thirdName = "Name";
         let thirdAmount = 0.0;
         let thirdDate = new Date();
+
+       async function fetchDonations() {
+        try {
+            const res = await fetch(NETLIFY_URL);
+            const data = await res.json();
+            donated = data.total || 0;
+
+            document.getElementById("donation1Name").textContent = data.recent[0]?.name ?? "Anonymous";
+            document.getElementById("donation1Amount").textContent = "$" + (data.recent[0]?.amount ?? 0).toLocaleString();
+            document.getElementById("donation1Time").textContent = data.recent[0]?.daysAgo === 0 ? "today" : (data.recent[0]?.daysAgo ?? "?") + " days ago";
+
+            document.getElementById("donation2Name").textContent = data.recent[1]?.name ?? "Anonymous";
+            document.getElementById("donation2Amount").textContent = "$" + (data.recent[1]?.amount ?? 0).toLocaleString();
+            document.getElementById("donation2Time").textContent = data.recent[1]?.daysAgo === 0 ? "today" : (data.recent[1]?.daysAgo ?? "?") + " days ago";
+
+            document.getElementById("donation3Name").textContent = data.recent[2]?.name ?? "Anonymous";
+            document.getElementById("donation3Amount").textContent = "$" + (data.recent[2]?.amount ?? 0).toLocaleString();
+            document.getElementById("donation3Time").textContent = data.recent[2]?.daysAgo === 0 ? "today" : (data.recent[2]?.daysAgo ?? "?") + " days ago";
+
+        } catch (err) {
+            console.error("Could not fetch donations:", err);
+            donated = 0;
+        }
+        animateDonation(donationAnim, donated);
+        }
         // Load on page open, then refresh every 5 minutes
         //fetchDonations();
         
@@ -449,7 +454,7 @@
         const goal = 20000;
         
         //dates
-        const currentDate = new Date();
+        const currentDate = new Date("2026-05-07");
         const startDate = new Date("2026-05-04");
         const artathonDate = new Date("2026-05-18");
         const summershowDate = new Date("2026-07-24");
@@ -478,10 +483,7 @@
         }
 
         // Usage
-        if (startAnim == true){
-            animateDonation(donationAnim, donated);
-        }
-        
+        animateDonation(donationAnim, donated);
 
         //set goal
         document.getElementById("artathon_g").textContent = "Goal: $" + artathonGoal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
