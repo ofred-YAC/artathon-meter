@@ -12,7 +12,7 @@ export const handler = async () => {
     const response = await fetch(url);
     const text = await response.text();
 
-    // DP returns single-quoted XML: name='foo' value='bar'
+    // DP returns single-quoted XML attributes: name='foo' value='bar'
     const getValue = (name) => {
       const match = text.match(new RegExp(`name='${name}'[^/]*value='([^']*)'`));
       return match ? match[1] : null;
@@ -24,7 +24,7 @@ export const handler = async () => {
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ total, count, raw: text }),
+      body: JSON.stringify({ total, count }),
     };
   } catch (err) {
     return {
