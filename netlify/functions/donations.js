@@ -4,17 +4,9 @@ const DP_API_KEY = process.env.DP_API_KEY;
 const DP_BASE_URL = "https://www.donorperfect.net/prod/xmlrequest.asp";
 
 export const handler = async () => {
-  // Check the API key is actually set
-  if (!DP_API_KEY) {
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: "DP_API_KEY is not set in environment variables" }),
-    };
-  }
-
-  // Try a super simple query first — just grab 1 gift to confirm the API works at all
-  const sql = `SELECT TOP 1 gift_id, amount, gift_narrative, sub_solicit_code, campaign FROM dpgift ORDER BY gift_id DESC`;
+  // DP online forms store their form ID in the dp_form field on dpgift.
+  // "ARTathon donation form" has id=3, so we filter by dp_form=3.
+  const sql = `SELECT SUM(amount) AS total_donated, COUNT(*) AS gift_count FROM dpgift WHERE dp_form = 3 AND record_type = 'G'`;
 
   const url = `${DP_BASE_URL}?apikey=${DP_API_KEY}&action=${encodeURIComponent(sql)}`;
 
@@ -22,20 +14,24 @@ export const handler = async () => {
     const response = await fetch(url);
     const text = await response.text();
 
+    // DP returns single-quoted XML attributes: name='foo' value='bar'
+    const getValue = (name) => {
+      const match = text.match(new RegExp(`name='${name}'[^/]*value='([^']*)'`));
+      return match ? match[1] : null;
+    };
+
+    const total = parseFloat(getValue("total_donated") || 0);
+    const count = parseInt(getValue("gift_count") || 0, 10);
+
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        http_status: response.status,
-        raw: text,
-        url_used: url.replace(DP_API_KEY, "REDACTED"),
-      }),
+      body: JSON.stringify({ total, count }),
     };
   } catch (err) {
     return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fetch_error: err.message }),
+      statusCode: 500,
+      body: JSON.stringify({ error: err.message }),
     };
   }
 };
