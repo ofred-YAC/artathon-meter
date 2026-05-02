@@ -409,7 +409,7 @@
             const res = await fetch(NETLIFY_URL);
             const data = await res.json();
             donated = data.total || 0;
-            
+            console.log("its working")
         } catch (err) {
             console.error("Could not fetch donations:", err);
             donated = 0;
