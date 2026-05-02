@@ -401,14 +401,15 @@
     <script>
         const NETLIFY_URL = 'https://artathon-meter.netlify.app/.netlify/functions/donations';
 
-        let donated = 0; // will be set by fetchDonations()
+        let donated = 2; // will be set by fetchDonations()
         let startAnim = false
         async function fetchDonations() {
+            startAnim = true
         try {
             const res = await fetch(NETLIFY_URL);
             const data = await res.json();
             donated = data.total || 0;
-            startAnim = true
+            
         } catch (err) {
             console.error("Could not fetch donations:", err);
             donated = 0;
@@ -448,7 +449,7 @@
         const goal = 20000;
         
         //dates
-        const currentDate = new Date("2026-05-07");
+        const currentDate = new Date();
         const startDate = new Date("2026-05-04");
         const artathonDate = new Date("2026-05-18");
         const summershowDate = new Date("2026-07-24");
