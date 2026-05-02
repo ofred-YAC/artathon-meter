@@ -399,90 +399,65 @@
     </div>
 
     <script>
-        const NETLIFY_URL = 'https://artathon-meter.netlify.app/.netlify/functions/donations';
-       
-        let donated = 7000;
-        
-        //first
-        let firstName = "Name";
-        let firstAmount = 0.0;
-        let firstDate = new Date();
-        //second
-        let secName = "Name";
-        let secAmount = 0.0;
-        let secDate = new Date();
-        //third
-        let thirdName = "Name";
-        let thirdAmount = 0.0;
-        let thirdDate = new Date();
 
-        let startAnim = false
-       async function fetchDonations() {
-        try {
-            const res = await fetch(NETLIFY_URL);
-            const data = await res.json();
-            donated = data.total || 0;
-        
-            document.getElementById("donation1Name").textContent = data.recent[0]?.name ?? "Anonymous";
-            document.getElementById("donation1Amount").textContent = "$" + (data.recent[0]?.amount ?? 0).toLocaleString();
-            document.getElementById("donation1Time").textContent = data.recent[0]?.daysAgo === 0 ? "today" : (data.recent[0]?.daysAgo ?? "?") + " days ago";
-        
-            document.getElementById("donation2Name").textContent = data.recent[1]?.name ?? "Anonymous";
-            document.getElementById("donation2Amount").textContent = "$" + (data.recent[1]?.amount ?? 0).toLocaleString();
-            document.getElementById("donation2Time").textContent = data.recent[1]?.daysAgo === 0 ? "today" : (data.recent[1]?.daysAgo ?? "?") + " days ago";
-        
-            document.getElementById("donation3Name").textContent = data.recent[2]?.name ?? "Anonymous";
-            document.getElementById("donation3Amount").textContent = "$" + (data.recent[2]?.amount ?? 0).toLocaleString();
-            document.getElementById("donation3Time").textContent = data.recent[2]?.daysAgo === 0 ? "today" : (data.recent[2]?.daysAgo ?? "?") + " days ago";
-        
-        } catch (err) {
-            console.error("Could not fetch donations:", err);
-            donated = 0;
-        }
-        animateDonation(donationAnim, donated);
-        }
+    const NETLIFY_URL = 'https://artathon-meter.netlify.app/.netlify/functions/donations';
 
-        // Load on page open, then refresh every 5 minutes
-        //fetchDonations();
-        
+    let donated = 0;
+    var donationAnim = 1;
+    const artathonGoal = 10000;
+    const goal = 20000;
 
-        //set donation variables
-        
-        //money goals
-        
-        var donationAnim = 1;
-        var donationPercent = 0;
-        const artathonGoal = 10000;
-        const goal = 20000;
-        
-        //dates
-        const currentDate = new Date();
-        const startDate = new Date("2026-05-04");
-        const artathonDate = new Date("2026-05-18");
-        const summershowDate = new Date("2026-07-24");
+    const currentDate = new Date();
+    const startDate = new Date("2026-05-04");
+    const artathonDate = new Date("2026-05-18");
+    const summershowDate = new Date("2026-07-24");
 
-        
+    if (currentDate < startDate) currentDate.setTime(startDate.getTime());
+    if (currentDate > summershowDate) currentDate.setTime(summershowDate.getTime());
 
-        if (currentDate < startDate) currentDate.setTime(startDate.getTime());
-        if (currentDate > summershowDate) currentDate.setTime(summershowDate.getTime());
-        
-        function animateDonation(current, target) {
-            if (current < target) {
-                var speed = 10
-                current+= speed;
-                if (current > target) 
-                    current = target
-                
-                var meter = (11+(current / goal)*83).toFixed(1) + "%"
-                if (donated <= speed)
-                meter = 0+ "%";
-                
-                
-                document.getElementById("currentDonationAmount").textContent = "$" + current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                document.documentElement.style.setProperty('--chickenMeterValue', meter)
-                setTimeout(() => animateDonation(current, target), 4); // Update every 10ms
-            }
-        }
+    function animateDonation(current, target) {
+    if (current < target) {
+        var speed = 10;
+        current += speed;
+        if (current > target) current = target;
+        var meter = (11 + (current / goal) * 83).toFixed(1) + "%";
+        if (target <= speed) meter = "0%";
+        document.getElementById("currentDonationAmount").textContent = "$" + current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        document.documentElement.style.setProperty('--chickenMeterValue', meter);
+        setTimeout(() => animateDonation(current, target), 4);
+    }
+    }
+
+    async function fetchDonations() {
+    try {
+        const res = await fetch(NETLIFY_URL);
+        const data = await res.json();
+        donated = data.total || 0;
+
+        document.getElementById("donation1Name").textContent = data.recent[0]?.name ?? "Anonymous";
+        document.getElementById("donation1Amount").textContent = "$" + (data.recent[0]?.amount ?? 0).toLocaleString();
+        document.getElementById("donation1Time").textContent = data.recent[0]?.daysAgo === 0 ? "today" : (data.recent[0]?.daysAgo ?? "?") + " days ago";
+
+        document.getElementById("donation2Name").textContent = data.recent[1]?.name ?? "Anonymous";
+        document.getElementById("donation2Amount").textContent = "$" + (data.recent[1]?.amount ?? 0).toLocaleString();
+        document.getElementById("donation2Time").textContent = data.recent[1]?.daysAgo === 0 ? "today" : (data.recent[1]?.daysAgo ?? "?") + " days ago";
+
+        document.getElementById("donation3Name").textContent = data.recent[2]?.name ?? "Anonymous";
+        document.getElementById("donation3Amount").textContent = "$" + (data.recent[2]?.amount ?? 0).toLocaleString();
+        document.getElementById("donation3Time").textContent = data.recent[2]?.daysAgo === 0 ? "today" : (data.recent[2]?.daysAgo ?? "?") + " days ago";
+
+    } catch (err) {
+        console.error("Could not fetch donations:", err);
+        donated = 0;
+    }
+    animateDonation(donationAnim, donated);
+    }
+
+// --- your existing timeline/goals code stays here unchanged ---
+
+// Call at the end, after everything is defined
+        fetchDonations();
+        setInterval(fetchDonations, 5 * 60 * 1000);
 
         // Usage
         
