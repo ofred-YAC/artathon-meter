@@ -432,7 +432,7 @@
     try {
         const res = await fetch(NETLIFY_URL);
         const data = await res.json();
-        donated = Math.round((data.total || 0) - 4650675);
+        donated = Math.round((data.total || 0) - 4650673);
         document.getElementById("donation1Name").textContent = data.recent[0]?.name ?? "Anonymous";
         document.getElementById("donation1Amount").textContent = "$" + (data.recent[0]?.amount ?? 0).toLocaleString();
         document.getElementById("donation1Time").textContent = data.recent[0]?.daysAgo === 0 ? "today" : (data.recent[0]?.daysAgo ?? "?") + " days ago";
