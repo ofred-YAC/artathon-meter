@@ -210,7 +210,7 @@
         color: var(--textColor);
         border-color: var(--textColor);
         background-color: white;
-        border-width: 2px;
+        border-width: 3px;
         cursor: pointer;
         filter: drop-shadow(0px 5px 0px #0022603f);
         height: 55px
@@ -226,7 +226,7 @@
     }
     
     #chicken{
-        background-image: url(./chicken.png);
+        background-image: url(./chicken_blinking.png);
         width: 100%;
         height: 100%;
         background-size: contain;
@@ -235,6 +235,7 @@
         background-position: bottom;
         
     }
+    
     #chickenMeter {
         height: 0%;
     }
@@ -456,11 +457,19 @@
 
 // Call at the end, after everything is defined
         fetchDonations();
-        
+        let canBlink = true;
+        function chickenBlink(){
+            document.getElementById("chicken").style.backgroundImage = "url(./chicken.png)"
+            if (Math.random() > 0.93 && canBlink){
+                document.getElementById("chicken").style.backgroundImage = "url(./chicken_blinking.png)"
+                canBlink = false
+            }
+            setTimeout(chickenBlink, 100)
+            canBlink = true
+            console.log(Math.random())
+        }
 
-        // Usage
-        
-
+        chickenBlink()
         //set goal
         document.getElementById("artathon_g").textContent = "Goal: $" + artathonGoal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         document.getElementById("summer_g").textContent = "Goal: $" + goal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
