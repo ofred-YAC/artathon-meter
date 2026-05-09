@@ -23,6 +23,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        
         padding: 0;
         font-family: 'granville';
         font-style:normal;
@@ -34,7 +35,7 @@
         width: 100%;
         max-width: 1200px;
         min-height: 100px;
-        padding: 6px;
+        
         display: flex;
         flex-direction: row;
         
@@ -251,8 +252,8 @@
     }
     #chickenMeter{
         position: absolute;
-        height: 98%;
-        width: 97%;
+        height: 97%;
+        width: 96%;
         background-color: var(--chickenMeter);
         border-radius: 15px;
         margin: 0px;
@@ -289,7 +290,7 @@
         display: flex;
         flex-direction: column;
         max-width: 250px;
-        margin: 10px;
+        margin-left: 10px;
     }
     .donationBox{
         display: flex;
@@ -321,15 +322,38 @@
             max-width: none;
             flex-direction: row;
             max-width: none;
-            margin: 0;
+            margin-left: 0;
+            
         }
         #container{
             flex-direction: column;
-            width: 90%;
+            width: 100%;
+            margin-right: 5%;
         }
         .donationBox{
             height: auto;
             width: 33.33333%;
+        }
+        
+    }
+    @media (max-width: 600px) {
+        #donateButton{
+            font-size: 1.2rem
+        }
+        #currentAmount{
+            font-size: 1.2rem;
+        }
+        #timelineText{
+            font-size: 1rem;
+        }
+        .donationBox{
+            font-size: smaller;
+        }
+        .event{
+            font-size: smaller;
+        }
+        .goal{
+            font-size: smaller;
         }
     }
 </style>
