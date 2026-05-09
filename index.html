@@ -224,19 +224,16 @@
     }
     
     #chicken {
-        background-image: url(./chicken_blinking.png), url(./chicken.png);
-        
+        background-image: url(./chicken_blinking.png);
         width: 100%;
         height: 100%;
         background-size: contain;
         background-repeat: repeat-x;
         position: absolute;
         background-position: bottom;
-        
+        z-index: 1; /* always below */
     }
-    #chicken {
-        background-image: url(./chicken_blinking.png);
-    }
+
     #chickenOpen {
         background-image: url(./chicken.png);
         width: 100%;
@@ -245,6 +242,7 @@
         background-repeat: repeat-x;
         position: absolute;
         background-position: bottom;
+        z-index: 2; /* always on top */
         visibility: hidden;
     }
     
@@ -524,9 +522,7 @@
 // Call at the end, after everything is defined
         fetchDonations();
         let canBlink = true;
-        const style = document.createElement('style');
-        document.head.appendChild(style);
-
+        const chickenOpen = document.getElementById('chickenOpen');
         function chickenBlink() {
             chickenOpen.style.visibility = 'hidden';
             if (Math.random() < 0.93 && canBlink) {
