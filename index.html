@@ -233,6 +233,16 @@
         background-position: bottom;
         
     }
+    #chicken::after {
+        content: '';
+        position: absolute;
+        inset: 0; /* shorthand for top/right/bottom/left: 0 */
+        background-image: url(./chicken.png);
+        background-size: contain;
+        background-repeat: repeat-x;
+        background-position: bottom;
+        visibility: hidden;
+    }
     
     #chickenMeter {
         height: 0%;
