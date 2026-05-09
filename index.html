@@ -243,7 +243,7 @@
         position: absolute;
         background-position: bottom;
         z-index: 2; /* always on top */
-        
+        opacity: 0;
     }
     
     #chickenMeter {
@@ -524,14 +524,13 @@
         let canBlink = true;
         const chickenOpen = document.getElementById('chickenOpen');
         function chickenBlink() {
-            chickenOpen.style.visibility = 'hidden';
+            chickenOpen.style.opacity = '0';
             if (Math.random() < 0.93 && canBlink) {
-                chickenOpen.style.visibility = 'visible';
+                chickenOpen.style.opacity = '1';
             }
             setTimeout(chickenBlink, 100);
             canBlink = true;
         }
-
         function preloadImages(urls) {
             return Promise.all(
                 urls.map(
@@ -545,7 +544,6 @@
                 )
             );
         }
-
         preloadImages(["./chicken.png", "./chicken_blinking.png"]).then(() => {
             setTimeout(chickenBlink, 150);
         });
