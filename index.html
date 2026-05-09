@@ -237,13 +237,13 @@
     #chicken {
         background-image: url(./chicken_blinking.png);
     }
-    #chicken::after {
-        content: '';
-        position: absolute;
-        inset: 0; /* shorthand for top/right/bottom/left: 0 */
+    #chickenOpen {
         background-image: url(./chicken.png);
+        width: 100%;
+        height: 100%;
         background-size: contain;
         background-repeat: repeat-x;
+        position: absolute;
         background-position: bottom;
         visibility: hidden;
     }
@@ -389,6 +389,7 @@
                         <div id="chickenMeterFill"></div>
                     </div>
                     <div id="chicken"></div>
+                    <div id="chickenOpen"></div>
                 </div>
                 
                 <div id="timelineContainer">
@@ -492,7 +493,7 @@
     preloadAfter.style.cssText = 'position:absolute;width:0;height:0;background-image:url(./chicken.png);visibility:hidden;';
     document.body.appendChild(preloadAfter);
 
-    
+
     async function fetchDonations() {
     try {
         const res = await fetch(NETLIFY_URL);
@@ -526,10 +527,9 @@
         document.head.appendChild(style);
 
         function chickenBlink() {
-            style.textContent = ''; // hide ::after (eyes closed showing)
+            chickenOpen.style.visibility = 'hidden';
             if (Math.random() < 0.93 && canBlink) {
-                style.textContent = '#chicken::after { visibility: visible; }'; // show ::after (eyes open)
-                canBlink = false;   
+                chickenOpen.style.visibility = 'visible';
             }
             setTimeout(chickenBlink, 100);
             canBlink = true;
