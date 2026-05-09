@@ -243,7 +243,7 @@
         position: absolute;
         background-position: bottom;
         z-index: 2; /* always on top */
-        opacity: 0;
+        opacity: 0.001;
     }
     
     #chickenMeter {
@@ -270,7 +270,7 @@
         border-radius: 15px;
         margin: 0px;
         padding: 3px;
-        transform: translateY(7px);
+        transform: translateY(2px);
     }
     
     #chickenMeterFill{
@@ -282,7 +282,7 @@
         width: 100%;
         border-top: 1px;
         z-index: 25;
-        transform: translateY(7px);
+        transform: translateY(2px);
     }
     #circleDisplay{
         width:20px;
@@ -524,7 +524,7 @@
         let canBlink = true;
         const chickenOpen = document.getElementById('chickenOpen');
         function chickenBlink() {
-            chickenOpen.style.opacity = '0';
+            chickenOpen.style.opacity = '0.001';
             if (Math.random() < 0.93 && canBlink) {
                 chickenOpen.style.opacity = '1';
             }
