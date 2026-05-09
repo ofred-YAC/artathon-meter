@@ -37,10 +37,11 @@
     }
     #container{
         width: 100%;
-        max-width: 700px;
+        max-width: 1200px;
         min-height: 100px;
         padding: 6px;
-       
+        display: flex;
+        flex-direction: row;
         
     }
     #box{
@@ -290,14 +291,16 @@
     .bottomBox{    
         min-height: 50px;
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
+        max-width: 250px;
+        margin: 10px;
     }
     .donationBox{
         display: flex;
         flex-direction: column;
         font-size: 1.3rem;
         color: var(--textColor);
-        width:33.33333%;
+        height:33.33333%;
         padding: 10px;
         border-style: dashed;
         border-width: 1px;
@@ -317,7 +320,21 @@
         font-size: 70%;
         opacity: 70%;
     }
-    
+    @media (max-width: 1000px) {
+        .bottomBox{
+            max-width: none;
+            flex-direction: row;
+            max-width: none;
+            
+        }
+        #container{
+            flex-direction: column;
+        }
+        .donationBox{
+            height: auto;
+            width: 33.33333%;
+        }
+    }
 </style>
 </head>
 <body>
