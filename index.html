@@ -556,7 +556,9 @@
         if (currentDate >= artathonDate) document.getElementById("artathon_c").classList.add("passed");
 
         //donation fields
-
+        function resizeIframe(obj) {
+            obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
+        }
     </script>
 </div>
 
