@@ -555,10 +555,11 @@
         //fill circles if event passed
         if (currentDate >= artathonDate) document.getElementById("artathon_c").classList.add("passed");
 
-        //donation fields
-        function resizeIframe(obj) {
-            obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
-        }
+        
+    </script>
+    <script src ="./iframeResizer.contentWindow.min.js"></script>
+    <script>
+        iFrameResize({ log: true }, '#iframeYAC')
     </script>
 </div>
 
