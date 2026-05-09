@@ -265,12 +265,12 @@
     #chickenMeter{
         position: absolute;
         height: 95%;
-        width: 96%;
+        width: 95%;
         background-color: var(--chickenMeter);
         border-radius: 15px;
         margin: 0px;
         padding: 3px;
-        transform: translateY(2px);
+        
     }
     
     #chickenMeterFill{
@@ -282,7 +282,7 @@
         width: 100%;
         border-top: 1px;
         z-index: 25;
-        transform: translateY(2px);
+        
     }
     #circleDisplay{
         width:20px;
@@ -481,7 +481,7 @@
 
     function animateDonation(current, target) {
     if (current < target) {
-        var speed = 90;
+        var speed = 50;
         current += speed;
         if (current > target) current = target;
         var meter = (11 + (current / goal) * 83).toFixed(1) + "%";
