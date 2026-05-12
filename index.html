@@ -303,7 +303,7 @@
         min-height: 50px;
         display: flex;
         flex-direction: column;
-        max-width:200px;
+        max-width:150px;
         margin-left: 10px;
     }
     .donationBox{
@@ -622,6 +622,7 @@
         function hideBottom(){
             document.getElementById("bottomBox").remove()
         }
+        
         window.addEventListener("message", (event) => {
         if (event.data === "hideBottom") {
             hideBottom();
