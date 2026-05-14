@@ -2,7 +2,7 @@
 <style>
     
     :root {
-        --main-padding: 15px;
+        --main-padding: 9px;
         --timelineSize: 400px;
         --circleSize: 15px;
         --artathonLoc: 35%;
@@ -33,7 +33,7 @@
     }
     #container{
         width: 100%;
-        max-width: 800px;
+        max-width:800px;
         min-height: 100px;
         
         display: flex;
@@ -53,16 +53,17 @@
         
     }
     #topBox{
-       aspect-ratio: 1/1;
+       aspect-ratio: 1.03/1;
     }
     
     #top{
         display: flex;
         background-color: var(--backgroundColor);
-        margin-top: 15px;
+        
         width: 100%;
         flex-direction:row;
-        aspect-ratio: 12.4/10;
+        aspect-ratio: 12/10;
+        
     }
     #bottom{
         background-color: var(--backgroundColor);
@@ -71,6 +72,7 @@
         display: flex;
         flex-direction: row;
         align-items: center;
+        
     }
     #chickenContainer{
         width: 35%;
@@ -81,14 +83,14 @@
     }
     #timelineContainer{
         width: 65%;
-        
+        height: 78%;
         background-color: var(--backgroundColor);
         display: flex;
         flex-direction: row;
-        
+        transform: translateY(15%);
     }
     #timelineMeter{
-        height: 100%;
+        
         width: 12px;
         background-color: var(--timelineColor);
         border-style: solid;
@@ -96,6 +98,7 @@
         border-radius: 15px;
         border-color: var(--timelineColor);
         opacity:70%;
+        
     }
     #timelineMeterFill{
         height: calc(100% - var(--timelineValue));
@@ -178,20 +181,25 @@
     #currentAmount{
         display: flex;
         flex-direction: row;
-        height: 100%;
-        padding: 25px;
+        
         align-items: center;
         min-width: 60%;
-        font-size: 1.6rem;
+        font-size: 1.7rem;
+        padding: 0px;
+        margin: 0px;
         text-align: right;
+        
     }
     h3{
-       margin: 7px;
+    margin: 0px;
+       margin-right: 7px;
         font-size: 120%;
     }
     h4{
-        font-size: 90%;
+        font-size: 80%;
         opacity: 90%;
+        margin: 0px;
+         margin-right: 7px;
     }
     a{
         width: 100%;
@@ -211,7 +219,8 @@
         border-width: 2px;
         cursor: pointer;
         filter: drop-shadow(0px 5px 0px #0022603f);
-        height: 65px
+        height: 55px;
+       
     }
     #donateButton:hover{
         transform: translateY(2px);
@@ -232,6 +241,7 @@
         position: absolute;
         background-position: bottom;
         z-index: 1; /* always below */
+        padding: 0px;
     }
 
     #chickenOpen {
@@ -293,7 +303,8 @@
         border-width: 1px;
         border-radius: 50%;
         aspect-ratio: 1;
-        
+        padding: 0px;
+        margin: 0px;
     }
     #timeLeft{
         font-size: 70%;
@@ -303,7 +314,7 @@
         min-height: 50px;
         display: flex;
         flex-direction: column;
-        max-width:200px;
+        max-width:160px;
         margin-left: 10px;
         
     }
