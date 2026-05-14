@@ -36,7 +36,7 @@ export const handler = async () => {
 
     // Query 2: last 3 gifts with donor name and date
     const recentXml = await fetchDP(
-      `SELECT TOP 3 g.gift_id, g.amount, g.gift_date, d.first_name, d.last_name, d.org_rec FROM dpgift g JOIN dp d ON g.donor_id = d.donor_id WHERE g.record_type = 'G' ORDER BY g.gift_id DESC`
+      `SELECT TOP 3 g.gift_id, g.amount, g.gift_date, d.first_name, d.last_name, d.org_rec FROM dpgift g JOIN dp d ON g.donor_id = d.donor_id WHERE g.record_type = 'G' ORDER BY g.gift_date DESC, g.gift_id DESC`
     );
     const recentRecords = parseRecords(recentXml);
 
