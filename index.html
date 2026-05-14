@@ -343,6 +343,13 @@
         font-size: 70%;
         opacity: 70%;
     }
+    h5{
+        padding: 15px;
+        margin:0px;
+        font-size: 1.6rem;
+        text-align: center;
+        color: var(--textColor);
+    }
     @media (max-width: 900px) {
         #bottomBox{
             max-width: none;
@@ -354,13 +361,16 @@
         #container{
             flex-direction: column;
             width: 100%;
-            margin-right: 8%;
+            margin-right: 7%;
         }
         .donationBox{
             height: auto;
             width: 33.33333%;
         }
-        
+        h5{
+            font-size: 0px;
+            padding: 0px;
+        }
     }
     @media (max-width: 600px) {
         #donateButton{
@@ -390,6 +400,7 @@
         #chickenMeterFill{
             border-style: none;
         }
+        
     }
 </style>
 
@@ -456,6 +467,7 @@
             </div>
         </div>
         <div id="bottomBox" class ="box">
+            <h5>Donations</h5>
             <div id="donation1" class = "donationBox">
                 <p1 id="donation1Name">Name</p1>
                 <p2 id="donation1Amount">$0</p2>
