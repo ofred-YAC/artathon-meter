@@ -514,10 +514,10 @@
 
         if (current > target) current = target;
 
-        var meter = (11 + (current / goal) * 83).toFixed(1) + "%";
+        var meter = (8 + (current / goal) * 86).toFixed(1) + "%";
 
         if (target <= speed) meter = "0%";
-        
+
         document.getElementById("currentDonationAmount").textContent = "$" + current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         document.documentElement.style.setProperty('--chickenMeterValue', meter);
         setTimeout(() => animateDonation(current, target), 4);
