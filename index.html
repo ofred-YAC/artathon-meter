@@ -497,7 +497,7 @@
     let donated = 0;
     var donationAnim = 1;
     const artathonGoal = 10000;
-    const goal = 25000;
+    const goal = 60000;
 
     const currentDate = new Date();
     const startDate = new Date("2026-05-15");
@@ -511,9 +511,13 @@
     if (current < target) {
         var speed = 50;
         current += speed;
+
         if (current > target) current = target;
+
         var meter = (11 + (current / goal) * 83).toFixed(1) + "%";
+
         if (target <= speed) meter = "0%";
+        
         document.getElementById("currentDonationAmount").textContent = "$" + current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         document.documentElement.style.setProperty('--chickenMeterValue', meter);
         setTimeout(() => animateDonation(current, target), 4);
@@ -643,7 +647,7 @@
         }
         //set timeline meter
         document.documentElement.style.setProperty('--timelineValue', timelinePercent);
-        document.documentElement.style.setProperty('--artathonLoc', "60%")
+        document.documentElement.style.setProperty('--artathonLoc', "65%")
 
         //fill circles if event passed
         if (currentDate >= artathonDate) document.getElementById("artathon_c").classList.add("passed");
@@ -656,6 +660,7 @@
             hideBottom();
         }
         });
+        
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.9/iframeResizer.contentWindow.min.js"></script>
 </div>
