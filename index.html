@@ -612,14 +612,14 @@
            if (parseInt(days / 30) >= 1){
             var months = parseInt(days/30)
             if (months > 1){
-                return months + " months left!"
+                return Math.round(months) + " months left!"
             }
             else{
-                return months + " month left!"
+                return Math.round(months) + " month left!"
             }
            }
            else{
-            return days + " days left!"
+            return Math.round(days) + " days left!"
            }
         }
 
