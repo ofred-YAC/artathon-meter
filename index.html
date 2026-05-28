@@ -531,12 +531,12 @@
         current += speed;
 
         if (current > target) current = target;
-        
+        var meter = "0%"
         if (daysPassed <= artathonDays){
-            var meter = percentFirstHalf * (current/target) + "%"
+            meter = percentFirstHalf * (current/target) + "%"
         }
         else {
-            var meter = percentSecondHalf * (current/target) + "%"
+            meter = percentSecondHalf * (current/target) + "%"
         }
         
         if (target <= speed) meter = "0%";
