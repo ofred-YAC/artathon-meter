@@ -491,7 +491,11 @@
     </div>
 
     <script>
-
+    const currentDate = new Date();
+    const startDate = new Date("2026-05-15");
+    const artathonDate = new Date("2026-06-21");
+    const summershowDate = new Date("2026-07-24");
+    
     const NETLIFY_URL = 'https://artathon-meter.netlify.app/.netlify/functions/donations';
 
     let donated = 0;
@@ -513,38 +517,35 @@
         return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
     }
 
-    var timelinePercent
-    var percentFirstHalf = map_range(daysPassed, 0, artathonDays, 0, 35)
-    var percentSecondHalf = map_range(daysPassed, artathonDays, totalDays, 35, 100)
+    var timelinePercent;
+    var percentFirstHalf = map_range(daysPassed, 0, artathonDays, 0, 35);
+    var percentSecondHalf = map_range(daysPassed, artathonDays, totalDays, 35, 100);
     
-    const currentDate = new Date();
-    const startDate = new Date("2026-05-15");
-    const artathonDate = new Date("2026-06-21");
-    const summershowDate = new Date("2026-07-24");
+    
 
     if (currentDate < startDate) currentDate.setTime(startDate.getTime());
     if (currentDate > summershowDate) currentDate.setTime(summershowDate.getTime());
 
     function animateDonation(current, target) {
-    if (current < target) {
-        var speed = 50;
-        current += speed;
-
-        if (current > target) current = target;
-        var meter = "0%"
-        if (daysPassed <= artathonDays){
-            meter = percentFirstHalf * (current/target) + "%"
+        if (current < target) {
+            var speed = 50;
+            current += speed;
+    
+            if (current > target) current = target;
+            var meter = "0%"
+            if (daysPassed <= artathonDays){
+                meter = percentFirstHalf * (current/target) + "%";
+            }
+            else {
+                meter = percentSecondHalf * (current/target) + "%";
+            }
+            
+            if (target <= speed) meter = "0%";
+    
+            document.getElementById("currentDonationAmount").textContent = "$" + current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            document.documentElement.style.setProperty('--chickenMeterValue', meter);
+            setTimeout(() => animateDonation(current, target), 4);
         }
-        else {
-            meter = percentSecondHalf * (current/target) + "%"
-        }
-        
-        if (target <= speed) meter = "0%";
-
-        document.getElementById("currentDonationAmount").textContent = "$" + current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        document.documentElement.style.setProperty('--chickenMeterValue', meter);
-        setTimeout(() => animateDonation(current, target), 4);
-    }
     }
     const preloadAfter = document.createElement('div');
     preloadAfter.style.cssText = 'position:absolute;width:0;height:0;background-image:url(./chicken.png);visibility:hidden;';
