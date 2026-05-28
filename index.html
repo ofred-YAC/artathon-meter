@@ -524,6 +524,7 @@
     var percentSecondHalf = map_range(daysPassed, artathonDays, totalDays, 35, 100);
     
     
+    
 
     if (currentDate < startDate) currentDate.setTime(startDate.getTime());
     if (currentDate > summershowDate) currentDate.setTime(summershowDate.getTime());
@@ -535,15 +536,16 @@
     
             if (current > target) current = target;
             var meter = "0%"
-            if (daysPassed <= artathonDays){
-                meter = 8+(percentFirstHalf * (current/target))*0.86 + "%";
+            
+            if (current <= artathonGoal){
+                meter = 8+(map_range(current, 0, artathonGoal, 0, 32))*0.82 + "%"
             }
             else {
-                meter = 8+(percentSecondHalf * (current/target))*0.86 + "%";
+                meter = (8+(map_range(current, artathonGoal, goal, 32, 100))*0.82) + "%"
             }
             
             if (target <= speed) meter = "0%";
-    
+            
             document.getElementById("currentDonationAmount").textContent = "$" + current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             document.documentElement.style.setProperty('--chickenMeterValue', meter);
             setTimeout(() => animateDonation(current, target), 4);
