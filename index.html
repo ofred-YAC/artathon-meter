@@ -498,7 +498,25 @@
     var donationAnim = 1;
     const artathonGoal = 10000;
     const goal = 60000;
+        
+    
+    //math
+    const totalDays = (summershowDate - startDate) / (24*60*60*1000);
+    const daysPassed = (currentDate - startDate) / (24*60*60*1000);
 
+    //const timelinePercent = ((daysPassed / totalDays)*100).toFixed(1)
+    const artathonDays = (artathonDate - startDate) / (24*60*60*1000);
+    const artathonPercent = (100-((artathonDays / totalDays)*100)).toFixed(1) + "%"
+    
+    //map range
+    function map_range(value, low1, high1, low2, high2) {
+        return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+    }
+
+    var timelinePercent
+    var percentFirstHalf = map_range(daysPassed, 0, artathonDays, 0, 35)
+    var percentSecondHalf = map_range(daysPassed, artathonDays, totalDays, 35, 100)
+    
     const currentDate = new Date();
     const startDate = new Date("2026-05-15");
     const artathonDate = new Date("2026-06-21");
@@ -513,9 +531,14 @@
         current += speed;
 
         if (current > target) current = target;
-
-        var meter = (8 + (current / goal) * 86).toFixed(1) + "%";
-
+        
+        if (daysPassed <= artathonDays){
+            var meter = percentFirstHalf * (current/target)
+        }
+        else {
+            var meter = percentSecondHalf * (current/target)
+        }
+        
         if (target <= speed) meter = "0%";
 
         document.getElementById("currentDonationAmount").textContent = "$" + current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -587,22 +610,7 @@
         document.getElementById("artathon_g").textContent = "Goal: $" + artathonGoal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         document.getElementById("summer_g").textContent = "Goal: $" + goal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-        //math
-        const totalDays = (summershowDate - startDate) / (24*60*60*1000);
-        const daysPassed = (currentDate - startDate) / (24*60*60*1000);
-
-        //const timelinePercent = ((daysPassed / totalDays)*100).toFixed(1)
-        const artathonDays = (artathonDate - startDate) / (24*60*60*1000);
-        const artathonPercent = (100-((artathonDays / totalDays)*100)).toFixed(1) + "%"
         
-        //map range
-        function map_range(value, low1, high1, low2, high2) {
-            return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
-        }
-
-        var timelinePercent
-        var percentFirstHalf = map_range(daysPassed, 0, artathonDays, 0, 35)
-        var percentSecondHalf = map_range(daysPassed, artathonDays, totalDays, 35, 100)
        
         
         const timeLeftDiv = document.createElement("div");
