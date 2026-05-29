@@ -567,15 +567,42 @@
         const res = await fetch(NETLIFY_URL);
         const data = await res.json();
         donated = Math.round((data.total || 0) - 4650675 - 20294 + 236.9);
-        document.getElementById("donation1Name").textContent = data.recent[0]?.name ?? "Anonymous";
+        const maxLength = 17;
+        
+        const name1 = data.recent[0]?.name ?? "Anonymous";
+        let name1Text = "";
+        const name2 = data.recent[1]?.name ?? "Anonymous";
+        let name2Text = "";
+        const name3 = data.recent[2]?.name ?? "Anonymous";
+        let name3Text = "";
+        
+        if (name1.length >= maxLength){
+            name1Text = name1.slice(0, -maxLength) + "...";
+        }
+        else{
+            name1Text = name1;
+        }
+        if (name2.length >= maxLength){
+            name2Text = name2.slice(0, -maxLength) + "...";
+        }
+        else{
+            name2Text = name2;
+        }
+        if (name3.length >= maxLength){
+            name3Text = name3.slice(0, -maxLength) + "...";
+        }
+        else{
+            name3Text = name3;
+        }
+        document.getElementById("donation1Name").textContent = name1Text;
         document.getElementById("donation1Amount").textContent = "$" + (data.recent[0]?.amount ?? 0).toLocaleString();
         document.getElementById("donation1Time").textContent = data.recent[0]?.daysAgo === 0 ? "today" : (data.recent[0]?.daysAgo ?? "?") + " days ago";
 
-        document.getElementById("donation2Name").textContent = data.recent[1]?.name ?? "Anonymous";
+        document.getElementById("donation2Name").textContent = name2Text;
         document.getElementById("donation2Amount").textContent = "$" + (data.recent[1]?.amount ?? 0).toLocaleString();
         document.getElementById("donation2Time").textContent = data.recent[1]?.daysAgo === 0 ? "today" : (data.recent[1]?.daysAgo ?? "?") + " days ago";
 
-        document.getElementById("donation3Name").textContent = data.recent[2]?.name ?? "Anonymous";
+        document.getElementById("donation3Name").textContent = name3Text;
         document.getElementById("donation3Amount").textContent = "$" + (data.recent[2]?.amount ?? 0).toLocaleString();
         document.getElementById("donation3Time").textContent = data.recent[2]?.daysAgo === 0 ? "today" : (data.recent[2]?.daysAgo ?? "?") + " days ago";
 
