@@ -548,10 +548,10 @@
             var meter = "0%"
             
             if (current <= artathonGoal){
-                meter = 8+(map_range(current, 0, artathonGoal, 0, 32))*0.82 + "%"
+                meter = 3+(map_range(current, 0, artathonGoal, 0, 32))*0.87 + "%"
             }
             else {
-                meter = (8+(map_range(current, artathonGoal, goal, 32, 100))*0.82) + "%"
+                meter = (3+(map_range(current, artathonGoal, goal, 32, 100))*0.87) + "%"
             }
             
             if (target <= speed) meter = "0%";
@@ -587,7 +587,8 @@
         console.error("Could not fetch donations:", err);
         donated = 0;
     }
-    animateDonation(donationAnim, donated);
+    
+    setTimeout(animateDonation(donationAnim, donated), 2000);
     }
 
 // --- your existing timeline/goals code stays here unchanged ---
