@@ -375,12 +375,8 @@
             font-size: 0px;
             padding: 0px;
         }
-        .start_eb{
-            visibility: none;
-        }
-        .startText{
-            visibility: none;
-        }
+        
+        
         
     }
     @media (max-width: 600px) {
@@ -412,10 +408,10 @@
             border-style: none;
         }
         #start_eb{
-            visibility: none;
+            display: none;
         }
-        #startText{
-            visibility: none;
+        #start_cl{
+            display: none;
         }
     }
 </style>
@@ -548,10 +544,10 @@
             var meter = "0%"
             
             if (current <= artathonGoal){
-                meter = 3+(map_range(current, 0, artathonGoal, 0, 32))*0.87 + "%"
+                meter = 3+(map_range(current, 0, artathonGoal, 0, 32))*.985 + "%"
             }
             else {
-                meter = (3+(map_range(current, artathonGoal, goal, 32, 100))*0.87) + "%"
+                meter = 3+(map_range(current, artathonGoal, goal, 32, 88))*.985 + "%"
             }
             
             if (target <= speed) meter = "0%";
