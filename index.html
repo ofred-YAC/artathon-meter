@@ -508,7 +508,7 @@
 
     let donated = 0;
     var donationAnim = 1;
-    const artathonGoal = 10000;
+    const artathonGoal = 20000;
     const goal = 60000;
         
     
@@ -566,7 +566,7 @@
     try {
         const res = await fetch(NETLIFY_URL);
         const data = await res.json();
-        donated = Math.round((data.total || 0) - 4650675 - 20294 + 236.9);
+        donated = Math.round((data.total || 0) - 4650675 - 20294 - 9500 + 236.9);
         const maxLength = 17;
         
         const name1 = data.recent[0]?.name ?? "Anonymous";
