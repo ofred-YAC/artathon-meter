@@ -45,10 +45,10 @@ export const handler = async () => {
       const giftDate = new Date(r.gift_date);
       const daysAgo = Math.floor((today - giftDate) / (1000 * 60 * 60 * 24));
 
-      // Use org name if it's an org record, otherwise first + last
+      
       const name = r.org_rec === "Y"
         ? r.last_name
-        : `${r.first_name} ${r.last_name}`.trim();
+        : `${r.first_name}`.trim();
 
       return {
         name: name || "Anonymous",
