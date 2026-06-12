@@ -531,9 +531,6 @@
     var timelinePercent;
     var percentFirstHalf = map_range(daysPassed, 0, artathonDays, 0, 35);
     var percentSecondHalf = map_range(daysPassed, artathonDays, totalDays, 35, 100);
-    
-    
-    
 
     if (currentDate < startDate) currentDate.setTime(startDate.getTime());
     if (currentDate > summershowDate) currentDate.setTime(summershowDate.getTime());
@@ -599,15 +596,15 @@
         }
         document.getElementById("donation1Name").textContent = name1Text;
         document.getElementById("donation1Amount").textContent = "$" + (data.recent[0]?.amount ?? 0).toLocaleString();
-        document.getElementById("donation1Time").textContent = data.recent[0]?.daysAgo === 0 ? "today" : (data.recent[0]?.daysAgo ?? "?") + " days ago";
+        document.getElementById("donation1Time").textContent = data.recent[0]?.daysAgo < 1 ? "today" : (data.recent[0]?.daysAgo ?? "?") + " days ago";
 
         document.getElementById("donation2Name").textContent = name2Text;
         document.getElementById("donation2Amount").textContent = "$" + (data.recent[1]?.amount ?? 0).toLocaleString();
-        document.getElementById("donation2Time").textContent = data.recent[1]?.daysAgo === 0 ? "today" : (data.recent[1]?.daysAgo ?? "?") + " days ago";
+        document.getElementById("donation2Time").textContent = data.recent[1]?.daysAgo <1 ? "today" : (data.recent[1]?.daysAgo ?? "?") + " days ago";
 
         document.getElementById("donation3Name").textContent = name3Text;
         document.getElementById("donation3Amount").textContent = "$" + (data.recent[2]?.amount ?? 0).toLocaleString();
-        document.getElementById("donation3Time").textContent = data.recent[2]?.daysAgo === 0 ? "today" : (data.recent[2]?.daysAgo ?? "?") + " days ago";
+        document.getElementById("donation3Time").textContent = data.recent[2]?.daysAgo <1 0 ? "today" : (data.recent[2]?.daysAgo ?? "?") + " days ago";
 
     } catch (err) {
         console.error("Could not fetch donations:", err);
@@ -669,6 +666,7 @@
             }
            }
            else{
+            
             return Math.round(days + 1) + " days left!"
            }
         }
